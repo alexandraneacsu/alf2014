@@ -1,0 +1,51 @@
+start
+  = expression1*
+
+//sintaxa
+expression1
+   =left:expression2 " " right:terminal {return left}
+
+// sintaxa left
+expression2
+   = left:string " = " right:suma { return left+' = '+right }
+
+
+suma
+  = left:scadere "+" right:suma { return left + right; }
+  / scadere
+
+
+scadere
+  = left:exponential "-" right:scadere { return left - right; }
+  / exponential
+
+
+exponential
+  = left:raport "^" right:exponential {return Math.pow(left,right)}
+  / raport
+
+
+raport 
+  = left:inmultire "/" right:raport {return left/right}
+  / inmultire
+
+
+inmultire
+  = left:primary "*" right:inmultire { return left * right; }
+  / primary
+
+//ordine
+primary
+  = integer
+  / "(" suma:suma ")" { return suma; }
+
+//integer
+integer "integer"
+  = (digits:[0-9]+) { return parseInt(digits.join(""), 10); }
+
+//variabila
+string "string"
+  = variable:([a-z,A-Z]+) { return variable.join(""); }
+
+terminal
+  = final:"$$""\n" { return final }
