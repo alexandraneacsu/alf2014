@@ -1,50 +1,6 @@
 /**Neacsu Alexandra
- * 1231F
+ *Groupe 1231F
  *
- * A Turing machine (TM) is a very simple kind of computer,
- * but despite its simplicity it can do anything
- * that the computer you are reading this on can
- * (it will probably be slower, but it will work).
- * A TM consists of:
- *     -A tape (the thing on the top with numbers on it).
- *      The tape is divided into infinitely many cells
- *      (the boxes that the numbers are in).
- *      Each cell contains a letter in the tape's alphabet
- *      (the alphabet consists of a blank symbol--here it's
- *      an empty box ("" in the source code) and any number
- *      of other symbols (here, those are "1" and "0").
- *     -A head (the yellow cell), which is the cell that the
- *      TM is currently looking at.
- *     -A list of states (the left part of the table).
- *      There are a finite number of states, and the
- *      TM starts in the "start" state.
- *     -A list of instructions (the right part of the table).
- *      If the TM is told to write 0, go right, and go to
- *      the "add" state, then it will overwrite the current
- *      slot on the tape with 0, move the head one cell to
- *      the right, and go to the state "add".
- * At each step of execution, the TM looks at the current
- * state, and what is currently on the tape.
- * For example, at the beginning, we're in state "start" and
- * we see a "1" on the tape.  Then, we look on the right half
- * of the table and see that we need to write down a "1",
- * move right, and stay in the start state.
- * This repeats until we get to the "stop" state, at which
- * point the machine is done running.
- * (It's possible for the machine to never get to the stop
- * state, in which case the TM runs forever.)
- * For more details about TMs, see
- * http://en.wikipedia.org/wiki/Turing_machine
- */
-
-// Input to this machine: a binary number.
-// Output: that binary number plus one.
-var addOneMachine = {};
-/** The states in the machine. If the machine is at state
- * "start", it looks in the rules for start to see
- * what character to write, what direction to move in,
- * and what state to go to next.
- * Change this to make the machine do whatever you want.
  */
 addOneMachine.stateTransition = {
     "start": { // Move to the right side of the number
