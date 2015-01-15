@@ -56,3 +56,4 @@ addOneMachine.stateTransition = {
     },
     "stop": {}  // Don't do anything else.
 };
+
