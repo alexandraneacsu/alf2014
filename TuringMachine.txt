@@ -1,6 +1,5 @@
 /**Neacsu Alexandra
  *Groupe 1231F
- *
  */
 addOneMachine.stateTransition = {
     "start": { // Move to the right side of the number
