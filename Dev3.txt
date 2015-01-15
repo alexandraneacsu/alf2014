@@ -1,3 +1,7 @@
+//Neacsu Alexandra
+//Groupe 1231F
+
+
 start
   = expression1*
 
@@ -16,22 +20,22 @@ suma
 
 
 scadere
-  = left:exponential "-" right:scadere { return left - right; }
-  / exponential
-
-
-exponential
-  = left:raport "^" right:exponential {return Math.pow(left,right)}
-  / raport
-
-
-raport 
-  = left:inmultire "/" right:raport {return left/right}
+  = left:inmultire "-" right:scadere { return left - right; }
   / inmultire
 
 
 inmultire
-  = left:primary "*" right:inmultire { return left * right; }
+  = left:raport "^" right:inmultire {return Math.pow(left,right)}
+  / raport
+
+
+raport 
+  = left:exponential "/" right:raport {return left/right}
+  / exponential
+
+
+exponential
+  = left:primary "*" right:exponential { return left * right; }
   / primary
 
 //ordine
