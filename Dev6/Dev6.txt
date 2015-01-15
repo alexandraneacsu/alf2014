@@ -1,0 +1,31 @@
+addOneMachine.stateTransition = {
+    "start": { // Move to the right side of the number
+        // If we're in state "start" and see "0", then
+        // write "0", move to the right, and go to state
+        // "start"
+        "0": ["0", "right", "start"],
+        "1" : ["1", "right", "start"],
+        // If we're in state "start" and see "" (empty box),
+        // then write "", move to the left, and go to state
+        // "add"
+        "": ["", "left", "add"]
+    },
+    "add": {
+        // 0 + 1 = 1. We're done adding because there's no
+        // carry
+        "0": ["1", "left", "done"],
+        // 1 + 1 = 10 in binary. So, we need to write down
+        // "0" and carry the 1.
+        "1": ["0", "left", "add"],
+        // We had to carry all the way to the left side of
+        // the number. Finish carrying.
+        "": ["1", "left", "done"]
+    },
+    "done": {
+    // Move all the way to the leftmost digit of the number
+        "0": ["0", "left", "done"],
+        "1": ["1", "left", "done"],
+        "": ["", "right", "stop"]
+    },
+    "stop": {}  // Don't do anything else.
+};
