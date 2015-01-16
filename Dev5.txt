@@ -1,0 +1,370 @@
+Skip to content
+ This repository
+Explore
+Gist
+Blog
+Help
+alexandraneacsu alexandraneacsu
+ 
+2  Watch 
+  Star 0
+ Fork 1night0094/ALF-2014
+ branch: master  ALF-2014/Devoir 5/dev5.txt
+Gheorghiu Ion-Alexandrunight0094 10 hours ago Boss interpreteur en java cc
+1 contributor
+353 lines (353 sloc)  5.614 kb RawBlameHistory   
++options {
++    MULTI=true;
++    NODE_EXTENDS="MyNode";
++    TRACK_TOKENS=true;
++}
++
++PARSER_BEGIN(SPLParser)
++
++/** Stupid Programming Language parser. */
++public class SPLParser {
++
++  /**
++   * Returns the root node of the AST.  
++   * It only makes sense to call this after a successful parse. 
++   * @return the root node
++   */
++  public Node rootNode() {
++    return jjtree.rootNode();
++  }  
++
++}
++
++PARSER_END(SPLParser)
++
++
++SKIP : /* WHITE SPACE */
++{
++  " "
++| "\t"
++| "\n"
++| "\r"
++| "\f"
++}
++
++TOKEN : /* Types */
++{
++   < INT: "int" >
++ |
++   < BOOL: "boolean" >
++}
++
++TOKEN : /* LITERALS */
++{
++  < INTEGER_LITERAL: (<DIGIT>)+ >
++}
++
++/*
++ * Program structuring syntax follows.
++ */
++
++/** Compilation unit. */
++void CompilationUnit() :
++{
++   String name;
++}
++{
++   (
++       VarDeclaration() "€€"
++     |
++       Statement()
++   )*
++   <EOF>
++}
++
++/** Variable declaration. */
++void VarDeclaration() :
++{ Token t; }
++{
++  (
++    "boolean" { jjtThis.type = BOOL; }
++   |
++    "int" { jjtThis.type = INT; }
++  )
++  t = <IDENTIFIER> 
++  { jjtThis.name = t.image; }
++}
++
++/*
++ * Expression syntax follows.
++ */
++
++/** Expression. */
++void Expression() #void:
++{}
++{
++  LOOKAHEAD( PrimaryExpression() "=" )
++  Assignment()
++|
++  ConditionalOrExpression()
++}
++
++/** Assignment. */
++void Assignment() #Assignment(2) :
++{}
++{
++  PrimaryExpression() "=" Expression()
++}
++
++/** Conditional or expression. */
++void ConditionalOrExpression() #void :
++{}
++{
++  ConditionalAndExpression()
++  ( "||" ConditionalAndExpression() #OrNode(2) )*
++}
++
++/** Conditional and expression. */
++void ConditionalAndExpression() #void :
++{}
++{
++  InclusiveOrExpression()
++  ( "&&" InclusiveOrExpression() #AndNode(2) )*
++}
++
++/** Inclusive or expression. */
++void InclusiveOrExpression() #void :
++{}
++{
++  ExclusiveOrExpression()
++  ( "|" ExclusiveOrExpression() #BitwiseOrNode(2) )*
++}
++
++/** Exclusive or expression. */
++void ExclusiveOrExpression() #void :
++{}
++{
++  AndExpression()
++  ( "^" AndExpression() #BitwiseXorNode(2) )*
++}
++
++/** And expression. */
++void AndExpression() #void :
++{}
++{
++  EqualityExpression()
++  ( "&" EqualityExpression() #BitwiseAndNode(2) )*
++}
++
++/** Equality expression. */
++void EqualityExpression() #void :
++{}
++{
++  RelationalExpression()
++  (
++     "==" RelationalExpression() #EQNode(2)
++   |
++     "!=" RelationalExpression() #NENode(2)
++  )*
++}
++
++/** Relational expression. */
++void RelationalExpression() #void :
++{}
++{
++  AdditiveExpression()
++  (
++    "<" AdditiveExpression() #LTNode(2)
++   |
++    ">" AdditiveExpression() #GTNode(2)
++   |
++    "<=" AdditiveExpression() #LENode(2)
++   |
++    ">=" AdditiveExpression() #GENode(2)
++  )*
++}
++
++/** Additive expression. */
++void AdditiveExpression() #void :
++{}
++{
++  MultiplicativeExpression()
++  (
++    "+" MultiplicativeExpression() #AddNode(2)
++   |
++    "-" MultiplicativeExpression() #SubtractNode(2)
++  )*
++}
++
++/** Multiplicative expression. */
++void MultiplicativeExpression() #void :
++{}
++{
++  UnaryExpression()
++  (
++    "*" UnaryExpression() #MulNode(2)
++   |
++    "/" UnaryExpression() #DivNode(2)
++   |
++    "%" UnaryExpression() #ModNode(2)
++  )*
++}
++
++/** Unary expression. */
++void UnaryExpression() #void :
++{}
++{
++  "~" UnaryExpression() #BitwiseComplNode(1)
++|
++  "!" UnaryExpression() #NotNode(1)
++|
++  PrimaryExpression()
++}
++
++/** Primary expression. */
++void PrimaryExpression() #void :
++{
++   String name;
++}
++{
++  Literal()
++|
++  Id() 
++|
++  "(" Expression() ")"
++}
++
++/** An Id. */
++void Id() :
++{
++   Token t;
++}
++{
++   t = <IDENTIFIER>  { jjtThis.name = t.image; }
++}
++
++/** A literal. */
++void Literal() #void :
++{
++   Token t;
++}
++{
++ (
++  t=<INTEGER_LITERAL>
++    {
++       jjtThis.val = Integer.parseInt(t.image);
++    }
++ )#IntConstNode
++|
++  BooleanLiteral()
++}
++
++/** A boolean literal. */
++void BooleanLiteral() #void :
++{}
++{
++  "true" #TrueNode
++|
++  "false" #FalseNode
++}
++
++/*
++ * Statement syntax follows.
++ */
++
++/** A statement. */
++void Statement() #void :
++{}
++{
++  "€€"
++|
++  LOOKAHEAD(2)
++  LabeledStatement()
++|
++  Block()
++|
++  StatementExpression()
++|
++  IfStatement()
++|
++  WhileStatement()
++|
++  IOStatement()
++}
++
++/** A labeled statement. */
++void LabeledStatement() #void :
++{}
++{
++  <IDENTIFIER> ":" Statement()
++}
++
++/** A block. */
++void Block() :
++{}
++{
++  "{" ( Statement() )* "}"
++}
++
++/** A statement expression. */
++void StatementExpression() :
++/*
++ * The last expansion of this production accepts more than the legal
++ * SPL expansions for StatementExpression.
++ */
++{}
++{
++  Assignment() "€€"
++}
++
++/** An if statement. */
++void IfStatement() :
++/*
++ * The disambiguating algorithm of JavaCC automatically binds dangling
++ * else's to the innermost if statement.  The LOOKAHEAD specification
++ * is to tell JavaCC that we know what we are doing.
++ */
++{}
++{
++  "if" "(" Expression() ")" Statement() [ LOOKAHEAD(1) "else" Statement() ] <IfStatamentTERMINATOR> 
++}
++
++/** A while statement. */
++void WhileStatement() :
++{}
++{
++  "while" "(" Expression() ")" Statement()
++}
++
++/** An IO statement. */
++void IOStatement() #void :
++{ String name; }
++{
++   ReadStatement()
++ |
++   WriteStatement()
++}
++
++/** A read statement. */
++void ReadStatement() :
++{ Token t; }
++{
++   "read" t = <IDENTIFIER>
++   { jjtThis.name = t.image; }
++}
++
++/** A write statement. */
++void WriteStatement() :
++{ Token t; }
++{
++   "write" t = <IDENTIFIER>
++   { jjtThis.name = t.image; }
++}
++
++TOKEN : /* IDENTIFIERS */
++{
++  < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>)* >
++|
++  < #LETTER: [ "a"-"z", "A"-"Z" ] >
++|
++  < #DIGIT: [ "0"-"9"] >
++|
++ <IfStatamentTERMINATOR :  "-*-" >
++}
+Status API Training Shop Blog About
+© 2015 GitHub, Inc. Terms Privacy Security Contact
